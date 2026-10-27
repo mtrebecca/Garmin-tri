@@ -56,18 +56,18 @@ class FuelSession {
         }
         _timer = new Timer.Timer();
 
-        var progress = Application.Storage.getValue("progress");
+        var progress = Application.Storage.getValue("progress") as Dictionary?;
         resumable = progress != null && strategy["id"].equals(progress["sid"]);
     }
 
     // Tempo já corrido no treino interrompido, para mostrar antes de continuar.
     function resumableSeconds() {
-        var progress = Application.Storage.getValue("progress");
+        var progress = Application.Storage.getValue("progress") as Dictionary?;
         return progress != null ? progress["offset"] : 0;
     }
 
     function resume() {
-        var progress = Application.Storage.getValue("progress");
+        var progress = Application.Storage.getValue("progress") as Dictionary;
         nextIndex = progress["next"];
         nextDueAt = progress["due"];
         carbsTaken = progress["taken"];
