@@ -93,3 +93,37 @@ export interface WatchItem {
   na: number;
   ml: number;
 }
+
+/** Registro de consumo vindo do relógio (ou corrigido no celular). Ver docs/contrato-estrategia.md. */
+export interface ConsumptionLog {
+  id: string;
+  sid: string;
+  i: number;
+  a: 'taken' | 'skipped' | 'snoozed' | 'missed';
+  /** Ausente = button (Device App). */
+  by?: 'button' | 'auto' | 'lap' | 'phone';
+  t: number;
+  ts: number;
+}
+
+export interface ItemOutcome {
+  index: number;
+  item: WatchItem;
+  status: 'taken' | 'skipped' | 'missed';
+  by?: NonNullable<ConsumptionLog['by']>;
+  snoozes: number;
+  takenAtSec?: number;
+  /** Atraso em relação ao planejado (negativo = antecipado). */
+  delaySec?: number;
+}
+
+export interface SessionSummary {
+  items: ItemOutcome[];
+  planned: Nutrients;
+  taken: Nutrients;
+  /** Fração dos itens consumidos, de 0 a 1. */
+  compliance: number;
+  /** Consumos presumidos pelo Data Field (sem confirmação nem correção). */
+  presumed: number;
+  byHour: { hour: number; planned: Nutrients; taken: Nutrients }[];
+}
