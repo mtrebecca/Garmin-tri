@@ -22,10 +22,10 @@ registrar consumo → ver métricas no celular.**
 | US-004 | Cadastrar produtos com carboidrato, sódio e volume | M | 🟨 tabela `products` |
 | US-005 | Informar duração prevista e temperatura do treino | M | ⬜ |
 | US-006 | Definir metas de carboidrato, líquido e sódio por hora | M | 🧪 |
-| US-020 | **Receber sugestão de metas do app** | M | 🧪 `suggestTargets` |
+| US-020 | **Receber sugestão de metas do app** | M | 🟨 tela Plano (sem perfil salvo) |
 | US-021 | **Fazer o teste de suor** e usar a taxa nas metas de líquido | S | 🧪 `sweatRateFromTest` |
-| US-022 | **Personalizar as metas** (editar a sugestão ou digitar valores próprios) | M | ⬜ |
-| US-007 | Ver o cronograma de consumo com as três metas | M | 🧪 `generateSchedule` |
+| US-022 | **Personalizar as metas** (editar a sugestão ou digitar valores próprios) | M | 🟨 tela Plano (sem salvar) |
+| US-007 | Ver o cronograma de consumo com as três metas | M | 🟨 tela Plano (sem salvar) |
 | US-023 | Editar o cronograma gerado (mover, trocar ou remover item) | S | ⬜ |
 
 ### Critérios de aceite
@@ -91,9 +91,9 @@ registrar consumo → ver métricas no celular.**
 | ID | História | Prior. | Status |
 |---|---|---|---|
 | US-012 | Consultar sessões anteriores | S | ⬜ |
-| US-013 | Comparar planejado × realizado (carbo, líquido e sódio) | S | ⬜ |
-| US-014 | Ver consumo por hora em gráficos | S | ⬜ |
-| US-015 | Identificar consumos pulados ou adiados e quando aconteceram | S | ⬜ |
+| US-013 | Comparar planejado × realizado (carbo, líquido e sódio) | S | 🟨 `summarizeSession` + tela Histórico (exemplo) |
+| US-014 | Ver consumo por hora em gráficos | S | 🟨 tela Histórico (exemplo) |
+| US-015 | Identificar consumos pulados ou adiados e quando aconteceram | S | 🟨 `summarizeSession` + tela Histórico (exemplo) |
 | US-027 | Corrigir no celular, após o treino, o que foi ou não consumido | M | 🟨 coluna `confirmed_by` |
 | US-024 | Ver evolução: média de g/h atingida e taxa de cumprimento do plano | S | ⬜ |
 | US-025 | Cruzar consumo com ritmo e FC do treino (Garmin/Strava) | C | ⬜ |
@@ -116,5 +116,6 @@ Rede social, marketplace, IA nutricional e assinaturas ficam fora do MVP.
 1. POC do relógio no FR255 (ver [poc.md](poc.md)): ambiente, alertas e modo offline.
 2. ~~Salvar o progresso da sessão no relógio (US-011)~~ — código pronto, entra no teste do POC.
 3. Edge Function no Supabase e `makeWebRequest` no relógio (US-016, US-017).
-4. App mobile: login → perfil → sugestão/teste de suor → metas → produtos → cronograma → enviar.
+4. App mobile: ~~telas Plano e Histórico~~ (prontas, sem dados reais) → login e Supabase → produtos →
+   teste de suor → salvar e enviar ao relógio → corrigir consumos.
 5. Métricas: planejado × realizado e gráficos por hora.

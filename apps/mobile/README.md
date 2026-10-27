@@ -1,13 +1,24 @@
 # FuelUp mobile
 
-Será criado no passo 3, depois que o POC do relógio passar (ver `docs/poc.md`):
+App Expo (SDK 58, Expo Router) para iOS e Android. A lógica de sugestões, teste de suor,
+cronograma e métricas vem de `@fuelup/core`.
 
 ```sh
-pnpm create expo-app@latest . --template tabs
+pnpm install          # na raiz do repositório
+cd apps/mobile
+npx expo start        # abra no Expo Go (QR code) ou pressione w para a web
+pnpm typecheck
 ```
 
-Stack: Expo + Expo Router, TypeScript, Zustand, TanStack Query, React Hook Form + Zod, Supabase.
-A lógica de sugestões, teste de suor e cronograma vem de `@fuelup/core`.
+## Telas
 
-Fluxo principal: login → perfil → sugestão de metas (ou teste de suor, ou valores próprios) →
-produtos → cronograma → enviar ao relógio → métricas planejado × realizado.
+- **Plano** (`src/app/index.tsx`): modalidade, duração, temperatura e perfil → metas sugeridas
+  (editáveis, com “Voltar à sugestão”) → produtos → cronograma com alertas combinados.
+- **Histórico** (`src/app/historico.tsx`): planejado × realizado, carboidrato por hora e status de
+  cada consumo. Por enquanto usa um treino de exemplo.
+
+## Próximos passos
+
+Login e dados no Supabase, cadastro de produtos (US-004), teste de suor (US-021), enviar ao relógio
+(US-016) e corrigir consumos no histórico (US-027). Formulários com React Hook Form + Zod e dados com
+TanStack Query entram junto com o Supabase.
