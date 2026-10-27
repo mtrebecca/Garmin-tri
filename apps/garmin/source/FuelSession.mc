@@ -17,9 +17,14 @@ enum SessionState {
 }
 
 // Grava a atividade e executa o cronograma de consumo.
+//
+// O progresso do plano fica no Storage ("progress") para sobreviver ao fechamento do app.
+// A gravação em si não pode ser retomada pelo Connect IQ: ao reabrir, o plano continua
+// de onde parou numa nova atividade, somando o tempo já corrido (_offset).
 class FuelSession {
     const SNOOZE_SECONDS = 300;
     const REVIBRATE_SECONDS = 15;
+    const SAVE_EVERY_SECONDS = 30;
 
     var strategy;
     var items;
@@ -29,12 +34,16 @@ class FuelSession {
     var alertActive = false;
     var carbsTaken = 0;
     var carbsPlanned = 0;
+    // Há um treino interrompido desta mesma estratégia que pode ser continuado.
+    var resumable = false;
 
     private var _session = null;
     private var _timer;
     private var _startedAt = 0;
     private var _lastVibeAt = 0;
     private var _seq = 0;
+    private var _offset = 0;
+    private var _lastSaveAt = 0;
 
     function initialize(strategy) {
         self.strategy = strategy;
@@ -46,6 +55,34 @@ class FuelSession {
             nextDueAt = items[0]["t"];
         }
         _timer = new Timer.Timer();
+
+        var progress = Application.Storage.getValue("progress");
+        resumable = progress != null && strategy["id"].equals(progress["sid"]);
+    }
+
+    // Tempo já corrido no treino interrompido, para mostrar antes de continuar.
+    function resumableSeconds() {
+        var progress = Application.Storage.getValue("progress");
+        return progress != null ? progress["offset"] : 0;
+    }
+
+    function resume() {
+        var progress = Application.Storage.getValue("progress");
+        nextIndex = progress["next"];
+        nextDueAt = progress["due"];
+        carbsTaken = progress["taken"];
+        _seq = progress["seq"];
+        _startedAt = progress["startedAt"];
+        _offset = progress["offset"];
+        _lastSaveAt = _offset;
+        resumable = false;
+        start();
+    }
+
+    function startFresh() {
+        clearProgress();
+        resumable = false;
+        start();
     }
 
     function start() {
@@ -57,11 +94,15 @@ class FuelSession {
                 :sport => Activity.SPORT_RUNNING,
                 :subSport => Activity.SUB_SPORT_GENERIC
             });
-            _startedAt = Time.now().value();
+            // Ao continuar, mantém o início original para os ids dos registros seguirem estáveis.
+            if (_startedAt == 0) {
+                _startedAt = Time.now().value();
+            }
             _timer.start(method(:onTick), 1000, true);
         }
         _session.start();
         state = STATE_RECORDING;
+        saveProgress();
     }
 
     function pause() {
@@ -75,20 +116,32 @@ class FuelSession {
         finish();
         _session.save();
         _session = null;
+        clearProgress();
     }
 
     function discard() {
         finish();
         _session.discard();
         _session = null;
+        clearProgress();
+    }
+
+    // App fechando no meio do treino: salva o que foi gravado e mantém o progresso para continuar.
+    function onAppStop() {
+        if (_session != null && state != STATE_FINISHED) {
+            saveProgress();
+            finish();
+            _session.save();
+            _session = null;
+        }
     }
 
     function elapsedSeconds() {
         var info = Activity.getActivityInfo();
         if (info == null || info.timerTime == null) {
-            return 0;
+            return _offset;
         }
-        return info.timerTime / 1000;
+        return _offset + info.timerTime / 1000;
     }
 
     function currentItem() {
@@ -111,6 +164,9 @@ class FuelSession {
                 notify(t);
                 WatchUi.pushView(new AlertView(self), new AlertDelegate(self), WatchUi.SLIDE_UP);
             }
+            if (t - _lastSaveAt >= SAVE_EVERY_SECONDS) {
+                saveProgress();
+            }
         }
         WatchUi.requestUpdate();
     }
@@ -130,6 +186,7 @@ class FuelSession {
         record("snoozed");
         nextDueAt = elapsedSeconds() + SNOOZE_SECONDS;
         alertActive = false;
+        saveProgress();
     }
 
     private function advance() {
@@ -142,6 +199,25 @@ class FuelSession {
             var t = items[nextIndex]["t"];
             nextDueAt = t > now ? t : now + 60;
         }
+        saveProgress();
+    }
+
+    private function saveProgress() {
+        var t = elapsedSeconds();
+        _lastSaveAt = t;
+        Application.Storage.setValue("progress", {
+            "sid" => strategy["id"],
+            "startedAt" => _startedAt,
+            "next" => nextIndex,
+            "due" => nextDueAt,
+            "taken" => carbsTaken,
+            "seq" => _seq,
+            "offset" => t
+        });
+    }
+
+    private function clearProgress() {
+        Application.Storage.deleteValue("progress");
     }
 
     private function finish() {

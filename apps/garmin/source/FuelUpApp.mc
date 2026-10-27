@@ -3,6 +3,7 @@ import Toybox.Lang;
 import Toybox.WatchUi;
 
 class FuelUpApp extends Application.AppBase {
+    private var _fuel = null;
 
     function initialize() {
         AppBase.initialize();
@@ -14,7 +15,13 @@ class FuelUpApp extends Application.AppBase {
         if (strategy == null) {
             strategy = SampleStrategy.get();
         }
-        var fuel = new FuelSession(strategy);
-        return [new MainView(fuel), new MainDelegate(fuel)];
+        _fuel = new FuelSession(strategy);
+        return [new MainView(_fuel), new MainDelegate(_fuel)];
+    }
+
+    function onStop(state as Dictionary?) as Void {
+        if (_fuel != null) {
+            _fuel.onAppStop();
+        }
     }
 }

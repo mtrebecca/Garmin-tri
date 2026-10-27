@@ -62,7 +62,16 @@ registrar consumo → ver métricas no celular.**
 | US-008 | Receber lembretes persistentes durante a atividade | M | 🟨 código pronto, validar no FR255 |
 | US-009 | Confirmar, pular ou adiar o consumo | M | 🟨 código pronto, validar no FR255 |
 | US-010 | Consultar o próximo consumo | M | 🟨 código pronto, validar no FR255 |
-| US-011 | Operar offline e sobreviver ao fechamento do app | S | 🟨 registros salvos; falta salvar o progresso da sessão |
+| US-011 | Operar offline e sobreviver ao fechamento do app | S | 🟨 código pronto, validar no FR255 |
+
+**US-011 — Continuar treino interrompido**
+- O progresso do plano é salvo a cada ação e a cada 30 s.
+- Ao reabrir, o relógio mostra “Treino interrompido” e o tempo corrido; START abre
+  “Continuar plano” ou “Novo treino”.
+- Continuar segue do próximo consumo, soma o tempo já corrido e mantém os ids dos registros estáveis.
+- Limitação do Connect IQ: a gravação não pode ser retomada. Se o app fechar normalmente, a parte
+  gravada é salva e a continuação vira uma segunda atividade. Se o app travar, a parte gravada se perde,
+  mas o plano e os registros de consumo continuam salvos.
 
 ## Épico 4 — Histórico e métricas
 
@@ -91,7 +100,7 @@ Rede social, marketplace, IA nutricional e assinaturas ficam fora do MVP.
 ## Próximos passos de desenvolvimento
 
 1. POC do relógio no FR255 (ver [poc.md](poc.md)): ambiente, alertas e modo offline.
-2. Salvar o progresso da sessão no relógio (US-011).
+2. ~~Salvar o progresso da sessão no relógio (US-011)~~ — código pronto, entra no teste do POC.
 3. Edge Function no Supabase e `makeWebRequest` no relógio (US-016, US-017).
 4. App mobile: login → perfil → sugestão/teste de suor → metas → produtos → cronograma → enviar.
 5. Métricas: planejado × realizado e gráficos por hora.

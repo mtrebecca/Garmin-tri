@@ -17,6 +17,13 @@ class MainView extends WatchUi.View {
         var cx = dc.getWidth() / 2;
         var h = dc.getHeight();
 
+        if (_fuel.state == STATE_IDLE && _fuel.resumable) {
+            drawCentered(dc, cx, h * 0.25, Graphics.FONT_SMALL, "Treino interrompido");
+            drawCentered(dc, cx, h * 0.42, Graphics.FONT_NUMBER_MILD, Format.duration(_fuel.resumableSeconds()));
+            drawCentered(dc, cx, h * 0.65, Graphics.FONT_XTINY, "START para continuar");
+            return;
+        }
+
         if (_fuel.state == STATE_IDLE) {
             drawCentered(dc, cx, h * 0.30, Graphics.FONT_MEDIUM, _fuel.strategy["name"]);
             drawCentered(dc, cx, h * 0.50, Graphics.FONT_SMALL, Lang.format("$1$ consumos", [_fuel.items.size()]));
