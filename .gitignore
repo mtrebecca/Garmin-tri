@@ -1,0 +1,16 @@
+node_modules/
+dist/
+coverage/
+.env
+.env.*
+
+# Garmin / Connect IQ
+apps/garmin/bin/
+*.prg
+*.iq
+developer_key*
+*.der
+*.pem
+
+# Expo
+.expo/
