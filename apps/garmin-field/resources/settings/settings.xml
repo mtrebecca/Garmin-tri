@@ -1,0 +1,5 @@
+<settings>
+    <setting propertyKey="@Properties.confirmWithLap" title="@Strings.ConfirmWithLapTitle">
+        <settingConfig type="boolean"/>
+    </setting>
+</settings>

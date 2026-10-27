@@ -39,9 +39,14 @@ unidos por `+` (cortados em 20 caracteres) e nutrientes somados. Qualquer campo 
 | `id` | `<início da sessão>-<índice>-<sequência>`, estável | `client_event_id` |
 | `sid` | Id da estratégia | `strategy_id` |
 | `i` | Índice do item na estratégia | `item_index` |
-| `a` | `taken`, `skipped` ou `snoozed` | `action` |
+| `a` | `taken`, `skipped`, `snoozed` ou `missed` | `action` |
+| `by` | `button`, `auto` ou `lap` (ausente = `button`) | `confirmed_by` |
 | `t` | Segundos de timer no momento da ação | `elapsed_sec` |
 | `ts` | Unix time da ação | `occurred_at` |
 
 O envio é um upsert por `(user_id, client_event_id)`, então reenviar é seguro.
 Itens sem nenhum registro `taken`/`skipped` ao final contam como **não realizados** (US-015).
+
+No Data Field (ADR 0002) não há `skipped` nem `snoozed`: com `confirmWithLap` desligado todo alerta
+vira `taken` com `by: "auto"`; ligado, vira `taken` com `by: "lap"` ou `missed`. O celular pode
+corrigir qualquer registro depois (`confirmed_by = 'phone'`).

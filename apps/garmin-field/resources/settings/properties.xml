@@ -1,0 +1,4 @@
+<properties>
+    <!-- false: alerta sem ação conta como consumido. true: LAP confirma; sem LAP vira não realizado. -->
+    <property id="confirmWithLap" type="boolean">false</property>
+</properties>

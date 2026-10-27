@@ -9,6 +9,13 @@ Cada etapa só começa quando a anterior passar. Anote problemas em "Achados".
   - [ ] vibração + bipe e repetição a cada 15 s até agir
   - [ ] START = consumi, DOWN = +5 min, BACK = pular
   - [ ] atividade salva aparece no Garmin Connect (e no Strava) como corrida, com GPS e FC
+- [ ] **2b. Data Field na atividade nativa** (ADR 0002), com o campo numa tela extra da Corrida:
+  - [ ] o alerta aparece por cima da tela atual, mesmo com a tela do campo fora de vista
+  - [ ] vibra e bipa; anotar quanto tempo o alerta fica na tela
+  - [ ] confirmWithLap desligado: registros `taken`/`auto`; ligado: LAP registra `taken`/`lap`,
+    sem LAP vira `missed` após 2 min (com nova vibração aos 60 s)
+  - [ ] a volta extra criada pelo LAP incomoda? Anotar
+  - [ ] comparar com o Device App numa corrida e decidir o modo principal
 - [ ] **3. Offline**: registros sobrevivem com o Bluetooth desligado e após fechar o app.
   - [ ] fechar o app no meio do treino (ou desligar o relógio) e reabrir: aparece "Treino interrompido"
     com o tempo correto

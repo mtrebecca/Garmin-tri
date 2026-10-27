@@ -1,6 +1,6 @@
 # ADR 0001: Device App no relógio e sincronização via backend
 
-**Status:** proposta (validar no POC)
+**Status:** proposta (validar no POC) · item 1 substituído pela [ADR 0002](0002-data-field-na-atividade-nativa.md)
 **Data:** 2026-10-26
 
 ## Contexto

@@ -59,8 +59,9 @@ registrar consumo → ver métricas no celular.**
 
 | ID | História | Prior. | Status |
 |---|---|---|---|
-| US-008 | Receber lembretes persistentes durante a atividade | M | 🟨 código pronto, validar no FR255 |
-| US-009 | Confirmar, pular ou adiar o consumo | M | 🟨 código pronto, validar no FR255 |
+| US-026 | Rodar dentro da atividade nativa sem ocupar o visor (Data Field, ADR 0002) | M | 🟨 código pronto, validar no FR255 |
+| US-008 | Receber lembretes durante a atividade | M | 🟨 código pronto, validar no FR255 |
+| US-009 | Confirmar o consumo: automático (padrão) ou com LAP, conforme configuração | M | 🟨 código pronto, validar no FR255 |
 | US-010 | Consultar o próximo consumo | M | 🟨 código pronto, validar no FR255 |
 | US-011 | Operar offline e sobreviver ao fechamento do app | S | 🟨 código pronto, validar no FR255 |
 
@@ -73,6 +74,18 @@ registrar consumo → ver métricas no celular.**
   gravada é salva e a continuação vira uma segunda atividade. Se o app travar, a parte gravada se perde,
   mas o plano e os registros de consumo continuam salvos.
 
+**US-026 / US-009 — Data Field e confirmação**
+- O atleta inicia a atividade nativa; o campo FuelUp fica numa tela extra e mostra a contagem.
+- No horário, vibra e mostra o alerta por cima da tela atual, que some sozinho.
+- Configuração “Confirmar consumo com LAP”: desligada, o alerta conta como consumido; ligada,
+  LAP em até 2 min confirma e sem LAP fica como não realizado.
+- Cada registro guarda a origem (`auto`, `lap`, `button`, `phone`).
+
+**US-027 — Corrigir no celular**
+- Depois da sincronização, o app lista os alertas do treino com o status de cada um.
+- O atleta marca o que consumiu ou não; a alteração grava `confirmed_by = 'phone'` e `edited_at`.
+- As métricas mostram quantos registros foram presumidos (`auto`) e não corrigidos.
+
 ## Épico 4 — Histórico e métricas
 
 | ID | História | Prior. | Status |
@@ -81,6 +94,7 @@ registrar consumo → ver métricas no celular.**
 | US-013 | Comparar planejado × realizado (carbo, líquido e sódio) | S | ⬜ |
 | US-014 | Ver consumo por hora em gráficos | S | ⬜ |
 | US-015 | Identificar consumos pulados ou adiados e quando aconteceram | S | ⬜ |
+| US-027 | Corrigir no celular, após o treino, o que foi ou não consumido | M | 🟨 coluna `confirmed_by` |
 | US-024 | Ver evolução: média de g/h atingida e taxa de cumprimento do plano | S | ⬜ |
 | US-025 | Cruzar consumo com ritmo e FC do treino (Garmin/Strava) | C | ⬜ |
 
