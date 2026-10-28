@@ -34,7 +34,9 @@ pnpm test
 5. No relógio real: **Monkey C: Build for Device** → `fr255`, conecte o FR255 via USB e copie o `.prg`
    gerado para `GARMIN\APPS`.
 
-Data Field: no relógio, adicione o campo **FuelUp** a uma tela da Corrida/Ciclismo. No alerta, se
+Data Field: no relógio, em **Corrida (ou Ciclismo) → Configurações → Telas de dados**, adicione uma tela
+de **1 campo** e escolha **Connect IQ → FuelUp**: ela vira uma tela a mais na sequência, com próximo consumo,
+contagem e consumido × planejado. Num espaço pequeno de outra tela, o campo mostra só a contagem. No alerta, se
 "Confirmar consumo com LAP" estiver ligado (configurações do app no Garmin Connect), aperte **LAP**.
 No simulador: inicie a atividade em **Settings → Activity Data** (os alertas de teste vêm aos 1, 3 e 5 min).
 
