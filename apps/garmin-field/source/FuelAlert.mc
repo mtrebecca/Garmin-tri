@@ -15,7 +15,7 @@ class FuelAlert extends WatchUi.DataFieldAlert {
     }
 
     function onUpdate(dc as Graphics.Dc) as Void {
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_BLACK);
+        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_WHITE);
         dc.clear();
         var w = dc.getWidth();
         var h = dc.getHeight();
@@ -32,16 +32,16 @@ class FuelAlert extends WatchUi.DataFieldAlert {
         dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
         dc.drawText(cx, h * 0.21, Graphics.FONT_XTINY, title, center);
 
-        dc.setColor(Graphics.COLOR_WHITE, Graphics.COLOR_TRANSPARENT);
+        dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
         dc.drawText(cx, h * 0.44, Graphics.FONT_MEDIUM, _item["p"], center);
 
         var y = h * 0.60;
         if (_item["c"] > 0) {
-            Icons.stat(dc, cx, y, false, Lang.format("$1$ g carbo", [_item["c"]]), Graphics.FONT_SMALL, Graphics.COLOR_WHITE);
+            Icons.stat(dc, cx, y, false, Lang.format("$1$ g carbo", [_item["c"]]), Graphics.FONT_SMALL, Graphics.COLOR_BLACK);
             y += h * 0.11;
         }
         if (drinks) {
-            Icons.stat(dc, cx, y, true, Lang.format("$1$ ml", [_item["ml"]]), Graphics.FONT_SMALL, Graphics.COLOR_WHITE);
+            Icons.stat(dc, cx, y, true, Lang.format("$1$ ml", [_item["ml"]]), Graphics.FONT_SMALL, Graphics.COLOR_BLACK);
             y += h * 0.11;
         }
         if (_item["c"] == 0 && !drinks && _item["na"] > 0) {
@@ -50,7 +50,7 @@ class FuelAlert extends WatchUi.DataFieldAlert {
         }
 
         if (_withLap) {
-            dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
+            dc.setColor(Graphics.COLOR_BLACK, Graphics.COLOR_TRANSPARENT);
             dc.drawText(cx, h * 0.86, Graphics.FONT_XTINY, "LAP = consumi", center);
         }
     }
