@@ -25,8 +25,10 @@ class FuelField extends WatchUi.DataField {
     const FULL_LAYOUT_MIN_HEIGHT = 150;
     const RING_WIDTH = 7;
     const RING_GAP = 3;
-    const CARBS_COLOR = Graphics.COLOR_ORANGE;
-    const WATER_COLOR = Graphics.COLOR_BLUE;
+    const CARBS_COLOR = Icons.CARBS_COLOR;
+    const WATER_COLOR = Icons.WATER_COLOR;
+    // No último minuto a contagem fica laranja, avisando que o consumo está chegando.
+    const SOON_SECONDS = 60;
 
     private var _items;
     private var _strategyId;
@@ -115,26 +117,33 @@ class FuelField extends WatchUi.DataField {
             drawRing(dc, w / 2, h / 2, outer - RING_WIDTH - RING_GAP, _mlTaken, _mlPlanned, WATER_COLOR);
         }
 
+        var muted = Graphics.COLOR_LT_GRAY;
         if (_next < 0) {
-            dc.drawText(cx, h * 0.30, Graphics.FONT_XTINY, "FUELUP", center);
-            dc.drawText(cx, h * 0.46, Graphics.FONT_SMALL, _strategyName, center);
+            dc.setColor(muted, Graphics.COLOR_TRANSPARENT);
+            dc.drawText(cx, h * 0.27, Graphics.FONT_XTINY, "FuelUp", center);
+            dc.setColor(fg, Graphics.COLOR_TRANSPARENT);
+            dc.drawText(cx, h * 0.43, Graphics.FONT_MEDIUM, _strategyName, center);
+            dc.setColor(muted, Graphics.COLOR_TRANSPARENT);
+            dc.drawText(cx, h * 0.57, Graphics.FONT_XTINY, "Inicie a atividade", center);
         } else if (_next < _items.size()) {
             var item = _items[_next];
-            dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(cx, h * 0.24, Graphics.FONT_XTINY, _pendingSince >= 0 ? "CONFIRME COM LAP" : "PROXIMO", center);
-            dc.setColor(_pendingSince >= 0 ? CARBS_COLOR : fg, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(cx, h * 0.42, Graphics.FONT_NUMBER_HOT, status(), center);
+            var waitingLap = _pendingSince >= 0;
+            var soon = !waitingLap && _items[_next]["t"] - _lastT <= SOON_SECONDS;
+            dc.setColor(waitingLap ? CARBS_COLOR : muted, Graphics.COLOR_TRANSPARENT);
+            dc.drawText(cx, h * 0.24, Graphics.FONT_XTINY, waitingLap ? "Aperte LAP se consumiu" : "Próximo em", center);
+            dc.setColor(waitingLap || soon ? CARBS_COLOR : fg, Graphics.COLOR_TRANSPARENT);
+            dc.drawText(cx, h * 0.41, Graphics.FONT_NUMBER_HOT, status(), center);
             dc.setColor(fg, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(cx, h * 0.59, Graphics.FONT_SMALL, item["p"], center);
+            dc.drawText(cx, h * 0.58, Graphics.FONT_SMALL, item["p"], center);
         } else {
-            dc.drawText(cx, h * 0.45, Graphics.FONT_MEDIUM, "Plano concluido", center);
+            dc.setColor(fg, Graphics.COLOR_TRANSPARENT);
+            dc.drawText(cx, h * 0.38, Graphics.FONT_MEDIUM, "Plano", center);
+            dc.drawText(cx, h * 0.52, Graphics.FONT_MEDIUM, "concluído!", center);
         }
 
-        dc.setColor(CARBS_COLOR, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(cx, h * 0.73, Graphics.FONT_XTINY, Lang.format("$1$ / $2$ g carbo", [_carbsTaken, _carbsPlanned]), center);
+        Icons.stat(dc, cx, h * 0.72, false, Lang.format("$1$/$2$ g", [_carbsTaken, _carbsPlanned]), Graphics.FONT_XTINY, fg);
         if (_mlPlanned > 0) {
-            dc.setColor(WATER_COLOR, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(cx, h * 0.83, Graphics.FONT_XTINY, Lang.format("$1$ / $2$ ml", [_mlTaken, _mlPlanned]), center);
+            Icons.stat(dc, cx, h * 0.82, true, Lang.format("$1$/$2$ ml", [_mlTaken, _mlPlanned]), Graphics.FONT_XTINY, fg);
         }
     }
 
