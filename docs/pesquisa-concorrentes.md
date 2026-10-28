@@ -9,6 +9,7 @@
 | Enduraid | Plano por perfil/clima/terreno | Assinatura | — |
 | Precision Fuel & Hydration | Planejador web detalhado | Grátis | Sem Garmin; complexo |
 | Data fields Connect IQ (Eat! Drink! Reminder!, FuelTheGoal) | Timers | Grátis | Até 5 alarmes, sem pop-up, sem registro |
+| FuelSteps (Connect IQ, 2026) | Data field com plano de gel/carbo por distância ou tempo, alerta em tela cheia | Grátis | Foco em carboidrato; sem hidratação/sódio nem planejado × realizado no celular (a confirmar) |
 
 ## Dores → diferenciais do FuelUp
 
