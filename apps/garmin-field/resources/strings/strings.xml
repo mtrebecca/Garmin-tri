@@ -1,4 +1,9 @@
 <strings>
     <string id="AppName">FuelUp</string>
+    <string id="EnabledTitle">FuelUp ativo</string>
+    <string id="ActiveRunTitle">Ativo na corrida</string>
+    <string id="ActiveBikeTitle">Ativo no ciclismo</string>
+    <string id="ActiveSwimTitle">Ativo na natação</string>
+    <string id="ActiveOtherTitle">Ativo em outras atividades</string>
     <string id="ConfirmWithLapTitle">Confirmar consumo com LAP</string>
 </strings>

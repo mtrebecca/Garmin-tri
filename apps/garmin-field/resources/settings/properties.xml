@@ -1,4 +1,11 @@
 <properties>
+    <!-- Liga ou desliga o FuelUp em todas as atividades. -->
+    <property id="enabled" type="boolean">true</property>
+    <!-- Atividades em que o FuelUp atua; nas demais a tela mostra "inativo" e não alerta. -->
+    <property id="activeRun" type="boolean">true</property>
+    <property id="activeBike" type="boolean">true</property>
+    <property id="activeSwim" type="boolean">false</property>
+    <property id="activeOther" type="boolean">false</property>
     <!-- false: alerta sem ação conta como consumido. true: LAP confirma; sem LAP vira não realizado. -->
     <property id="confirmWithLap" type="boolean">false</property>
 </properties>

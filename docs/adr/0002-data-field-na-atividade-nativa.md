@@ -22,6 +22,15 @@
    - **ligado:** LAP em até 2 min confirma (`by: "lap"`); sem LAP vira `missed`.
 4. O app do celular permite corrigir os registros depois do treino (`by: "phone"`).
 5. O Device App (`apps/garmin`) fica como alternativa até o teste no relógio decidir.
+6. **Em quais atividades atua** (`enabled`, `activeRun`, `activeBike`, `activeSwim`, `activeOther`):
+   o atleta adiciona a tela do FuelUp uma vez em cada atividade; o campo lê o esporte
+   (`Activity.getProfileInfo`) e só alerta e registra nas marcadas. Nas demais mostra “inativo”.
+   Por enquanto as opções ficam nas configurações do app no Garmin Connect; depois o app FuelUp
+   do celular as envia junto com a estratégia.
+7. **Posição da tela:** nenhum app Connect IQ pode criar telas de dados nem mudar a ordem delas.
+   O app do celular vai guiar o atleta a colocar o FuelUp como última tela, logo antes do relógio.
+8. **Visual:** foco em tempo e carboidrato. Contagem grande até o próximo consumo, o produto e um
+   anel na borda com o carboidrato consumido do plano; distância e FC ficam nas telas nativas.
 
 ## Consequências
 
@@ -32,4 +41,4 @@
 - ❓ Sincronização: um Data Field não chama a internet direto; precisa de serviço em segundo
   plano (`Background`) ou receber a estratégia pelas configurações do app. Decidir no POC.
 - ❓ Validar no FR255: o alerta aparece com a tela do campo fora de vista? Quanto tempo fica?
-  Vibração é permitida em Data Field? Cabe na memória?
+  Vibração é permitida em Data Field? (Memória: 11,5 de 252,5 KB no simulador do FR255 Music.)

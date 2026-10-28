@@ -41,10 +41,8 @@ class MainView extends WatchUi.View {
         var t = _fuel.elapsedSeconds();
         drawCentered(dc, cx, h * 0.12, Graphics.FONT_NUMBER_MEDIUM, Format.duration(t));
 
-        var info = Activity.getActivityInfo();
-        var hr = (info != null && info.currentHeartRate != null) ? info.currentHeartRate.toString() : "--";
-        var km = (info != null && info.elapsedDistance != null) ? (info.elapsedDistance / 1000.0).format("%.2f") : "0.00";
-        drawCentered(dc, cx, h * 0.40, Graphics.FONT_SMALL, Lang.format("$1$ km  |  $2$ bpm", [km, hr]));
+        // Distância e FC ficam nas telas do Garmin; aqui o foco é a suplementação.
+        drawCentered(dc, cx, h * 0.40, Graphics.FONT_SMALL, Format.carbs(_fuel.carbsTaken, _fuel.carbsPlanned) + " carbo");
 
         var item = _fuel.currentItem();
         if (item != null) {
@@ -54,7 +52,6 @@ class MainView extends WatchUi.View {
             drawCentered(dc, cx, h * 0.60, Graphics.FONT_XTINY, "Plano concluido");
         }
 
-        drawCentered(dc, cx, h * 0.80, Graphics.FONT_XTINY, Format.carbs(_fuel.carbsTaken, _fuel.carbsPlanned));
 
         if (_fuel.state == STATE_PAUSED) {
             dc.setColor(Graphics.COLOR_YELLOW, Graphics.COLOR_TRANSPARENT);

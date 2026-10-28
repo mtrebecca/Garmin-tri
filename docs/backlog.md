@@ -60,6 +60,8 @@ registrar consumo → ver métricas no celular.**
 | ID | História | Prior. | Status |
 |---|---|---|---|
 | US-026 | Rodar dentro da atividade nativa sem ocupar o visor (Data Field, ADR 0002) | M | 🟨 código pronto, validar no FR255 |
+| US-028 | Escolher no celular em quais atividades o FuelUp atua (corrida, ciclismo, natação, outras) | M | 🟨 configurações do app no Garmin Connect |
+| US-029 | Guia no celular para adicionar a tela do FuelUp como última, antes do relógio | S | ⬜ |
 | US-008 | Receber lembretes durante a atividade | M | 🟨 código pronto, validar no FR255 |
 | US-009 | Confirmar o consumo: automático (padrão) ou com LAP, conforme configuração | M | 🟨 código pronto, validar no FR255 |
 | US-010 | Consultar o próximo consumo | M | 🟨 código pronto, validar no FR255 |

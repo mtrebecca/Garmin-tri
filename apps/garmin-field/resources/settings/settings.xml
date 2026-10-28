@@ -1,4 +1,19 @@
 <settings>
+    <setting propertyKey="@Properties.enabled" title="@Strings.EnabledTitle">
+        <settingConfig type="boolean"/>
+    </setting>
+    <setting propertyKey="@Properties.activeRun" title="@Strings.ActiveRunTitle">
+        <settingConfig type="boolean"/>
+    </setting>
+    <setting propertyKey="@Properties.activeBike" title="@Strings.ActiveBikeTitle">
+        <settingConfig type="boolean"/>
+    </setting>
+    <setting propertyKey="@Properties.activeSwim" title="@Strings.ActiveSwimTitle">
+        <settingConfig type="boolean"/>
+    </setting>
+    <setting propertyKey="@Properties.activeOther" title="@Strings.ActiveOtherTitle">
+        <settingConfig type="boolean"/>
+    </setting>
     <setting propertyKey="@Properties.confirmWithLap" title="@Strings.ConfirmWithLapTitle">
         <settingConfig type="boolean"/>
     </setting>

@@ -6,13 +6,15 @@ import Toybox.Lang;
 import Toybox.Time;
 import Toybox.WatchUi;
 
-// Campo de dados que roda dentro da atividade nativa (Corrida, Ciclismo, Triathlon).
-// Numa tela de dados só dele, mostra o painel completo (próximo consumo, contagem e
-// consumido × planejado); num espaço pequeno de outra tela, só a contagem. Na hora certa
-// vibra e abre um alerta por cima da tela atual, que some sozinho.
+// Campo de dados que roda dentro da atividade nativa (Corrida, Ciclismo, Natação, Triathlon).
+// Numa tela de dados só dele, mostra o painel: contagem para o próximo consumo, o produto e
+// um anel com o carboidrato consumido do plano; num espaço pequeno de outra tela, só a
+// contagem. Na hora certa vibra e abre um alerta por cima da tela atual, que some sozinho.
 //
-// Registro (configuração "confirmWithLap"):
-//   desligado: alerta sem ação conta como consumido ("taken", by "auto").
+// Configurações (app Garmin Connect no celular):
+//   enabled e activeRun/Bike/Swim/Other: em quais atividades o FuelUp atua; nas demais a
+//   tela mostra "inativo" e não alerta nem registra.
+//   confirmWithLap desligado: alerta sem ação conta como consumido ("taken", by "auto");
 //   ligado: LAP em até 2 min confirma ("taken", by "lap"); sem LAP vira "missed".
 // O celular pode corrigir os registros depois (by "phone").
 class FuelField extends WatchUi.DataField {
@@ -20,21 +22,21 @@ class FuelField extends WatchUi.DataField {
     const REMIND_AFTER_SECONDS = 60;
     // Abaixo disso o campo divide a tela com outros e mostra só a contagem.
     const FULL_LAYOUT_MIN_HEIGHT = 150;
+    const RING_WIDTH = 8;
 
     private var _items;
     private var _strategyId;
     private var _strategyName;
     // -1 = ainda não posicionado no cronograma (a atividade não começou).
     private var _next = -1;
+    private var _active = true;
     private var _pendingSince = -1;
     private var _reminded = false;
     private var _sessionStart = 0;
     private var _seq = 0;
     private var _lastT = 0;
     private var _carbsPlanned = 0;
-    private var _mlPlanned = 0;
     private var _carbsTaken = 0;
-    private var _mlTaken = 0;
 
     function initialize() {
         DataField.initialize();
@@ -48,7 +50,6 @@ class FuelField extends WatchUi.DataField {
         _strategyName = strategy["name"];
         for (var i = 0; i < _items.size(); i++) {
             _carbsPlanned += _items[i]["c"];
-            _mlPlanned += _items[i]["ml"];
         }
     }
 
@@ -60,6 +61,9 @@ class FuelField extends WatchUi.DataField {
         _lastT = t;
         if (_next < 0) {
             begin(t);
+        }
+        if (!_active) {
+            return;
         }
 
         if (_pendingSince >= 0) {
@@ -80,38 +84,65 @@ class FuelField extends WatchUi.DataField {
         var fg = bg == Graphics.COLOR_BLACK ? Graphics.COLOR_WHITE : Graphics.COLOR_BLACK;
         dc.setColor(fg, bg);
         dc.clear();
-        var cx = dc.getWidth() / 2;
+        var w = dc.getWidth();
         var h = dc.getHeight();
+        var cx = w / 2;
         var center = Graphics.TEXT_JUSTIFY_CENTER | Graphics.TEXT_JUSTIFY_VCENTER;
 
         if (h < FULL_LAYOUT_MIN_HEIGHT) {
             dc.drawText(cx, h * 0.25, Graphics.FONT_XTINY, "FuelUp", center);
-            dc.drawText(cx, h * 0.62, Graphics.FONT_MEDIUM, status(), center);
+            dc.drawText(cx, h * 0.62, Graphics.FONT_MEDIUM, _active ? status() : "--", center);
             return;
         }
 
-        dc.drawText(cx, h * 0.14, Graphics.FONT_XTINY, "FUELUP", center);
+        if (!_active) {
+            dc.drawText(cx, h * 0.42, Graphics.FONT_SMALL, "FuelUp", center);
+            dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
+            dc.drawText(cx, h * 0.56, Graphics.FONT_XTINY, "inativo nesta atividade", center);
+            return;
+        }
+
+        drawRing(dc, w, h);
+
         if (_next < 0) {
-            dc.drawText(cx, h * 0.40, Graphics.FONT_SMALL, _strategyName, center);
-            dc.drawText(cx, h * 0.58, Graphics.FONT_XTINY, Lang.format("$1$ consumos", [_items.size()]), center);
+            dc.drawText(cx, h * 0.34, Graphics.FONT_XTINY, "FUELUP", center);
+            dc.drawText(cx, h * 0.50, Graphics.FONT_SMALL, _strategyName, center);
+            dc.drawText(cx, h * 0.66, Graphics.FONT_XTINY, Lang.format("$1$ g carbo", [_carbsPlanned]), center);
             return;
         }
 
         if (_next < _items.size()) {
-            dc.drawText(cx, h * 0.30, Graphics.FONT_SMALL, _items[_next]["p"], center);
-            if (_pendingSince >= 0) {
-                dc.setColor(Graphics.COLOR_ORANGE, Graphics.COLOR_TRANSPARENT);
-            }
-            dc.drawText(cx, h * 0.49, Graphics.FONT_NUMBER_MEDIUM, status(), center);
+            var item = _items[_next];
+            dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
+            dc.drawText(cx, h * 0.24, Graphics.FONT_XTINY, _pendingSince >= 0 ? "CONFIRME COM LAP" : "PROXIMO", center);
+            dc.setColor(_pendingSince >= 0 ? Graphics.COLOR_ORANGE : fg, Graphics.COLOR_TRANSPARENT);
+            dc.drawText(cx, h * 0.45, Graphics.FONT_NUMBER_HOT, status(), center);
             dc.setColor(fg, Graphics.COLOR_TRANSPARENT);
+            dc.drawText(cx, h * 0.64, Graphics.FONT_SMALL, item["p"], center);
         } else {
-            dc.drawText(cx, h * 0.40, Graphics.FONT_MEDIUM, "Plano concluido", center);
+            dc.drawText(cx, h * 0.45, Graphics.FONT_MEDIUM, "Plano concluido", center);
         }
 
-        dc.drawText(cx, h * 0.69, Graphics.FONT_SMALL, Lang.format("$1$/$2$ g carbo", [_carbsTaken, _carbsPlanned]), center);
-        if (_mlPlanned > 0) {
-            dc.drawText(cx, h * 0.82, Graphics.FONT_XTINY, Lang.format("$1$/$2$ ml", [_mlTaken, _mlPlanned]), center);
+        dc.setColor(Graphics.COLOR_ORANGE, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(cx, h * 0.79, Graphics.FONT_XTINY, Lang.format("$1$ / $2$ g carbo", [_carbsTaken, _carbsPlanned]), center);
+    }
+
+    // Anel na borda da tela: trilho cinza e, em laranja, a fração do carboidrato planejado já consumida.
+    private function drawRing(dc as Graphics.Dc, w, h) {
+        var r = (w < h ? w : h) / 2 - RING_WIDTH / 2 - 1;
+        dc.setPenWidth(RING_WIDTH);
+        dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
+        dc.drawCircle(w / 2, h / 2, r);
+        if (_carbsPlanned > 0 && _carbsTaken > 0) {
+            var sweep = 360 * _carbsTaken / _carbsPlanned;
+            dc.setColor(Graphics.COLOR_ORANGE, Graphics.COLOR_TRANSPARENT);
+            if (sweep >= 360) {
+                dc.drawCircle(w / 2, h / 2, r);
+            } else {
+                dc.drawArc(w / 2, h / 2, r, Graphics.ARC_CLOCKWISE, 90, 90 - sweep);
+            }
         }
+        dc.setPenWidth(1);
     }
 
     // Contagem para o próximo consumo, "LAP?" aguardando confirmação ou "Fim".
@@ -140,16 +171,40 @@ class FuelField extends WatchUi.DataField {
         _pendingSince = -1;
         _seq = 0;
         _carbsTaken = 0;
-        _mlTaken = 0;
     }
 
     // Se o campo for recarregado no meio do treino, não dispara os alertas que já passaram.
     private function begin(t) {
+        _active = isActiveForCurrentSport();
         _sessionStart = Time.now().value() - t;
         _next = 0;
         while (_next < _items.size() && _items[_next]["t"] < t - 1) {
             _next += 1;
         }
+    }
+
+    // A tela do FuelUp fica em todas as atividades em que o atleta a adicionou; as
+    // configurações decidem em quais delas ele alerta. Esporte desconhecido conta como "outras".
+    private function isActiveForCurrentSport() as Boolean {
+        if (Application.Properties.getValue("enabled") == false) {
+            return false;
+        }
+        var sport = null;
+        if (Activity has :getProfileInfo) {
+            var profile = Activity.getProfileInfo();
+            if (profile != null) {
+                sport = profile.sport;
+            }
+        }
+        var key = "activeOther";
+        if (sport == Activity.SPORT_RUNNING) {
+            key = "activeRun";
+        } else if (sport == Activity.SPORT_CYCLING) {
+            key = "activeBike";
+        } else if (sport == Activity.SPORT_SWIMMING) {
+            key = "activeSwim";
+        }
+        return Application.Properties.getValue(key) == true;
     }
 
     private function alert(t) {
@@ -195,7 +250,6 @@ class FuelField extends WatchUi.DataField {
         }
         if (action.equals("taken")) {
             _carbsTaken += _items[_next]["c"];
-            _mlTaken += _items[_next]["ml"];
         }
         _seq += 1;
         logs.add({
