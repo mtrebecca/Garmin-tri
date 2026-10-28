@@ -8,8 +8,9 @@ import Toybox.WatchUi;
 
 // Campo de dados que roda dentro da atividade nativa (Corrida, Ciclismo, Natação, Triathlon).
 // Numa tela de dados só dele, mostra o painel: contagem para o próximo consumo, o produto e
-// um anel com o carboidrato consumido do plano; num espaço pequeno de outra tela, só a
-// contagem. Na hora certa vibra e abre um alerta por cima da tela atual, que some sozinho.
+// dois anéis com o carboidrato (laranja) e a hidratação (azul) consumidos do plano; num espaço
+// pequeno de outra tela, só a contagem. No modo padrão, sem nenhum clique, cada alerta conta
+// como consumido, então os totais sobem sozinhos conforme o plano. Na hora certa vibra e abre um alerta por cima da tela atual, que some sozinho.
 //
 // Configurações (app Garmin Connect no celular):
 //   enabled e activeRun/Bike/Swim/Other: em quais atividades o FuelUp atua; nas demais a
@@ -22,7 +23,10 @@ class FuelField extends WatchUi.DataField {
     const REMIND_AFTER_SECONDS = 60;
     // Abaixo disso o campo divide a tela com outros e mostra só a contagem.
     const FULL_LAYOUT_MIN_HEIGHT = 150;
-    const RING_WIDTH = 8;
+    const RING_WIDTH = 7;
+    const RING_GAP = 3;
+    const CARBS_COLOR = Graphics.COLOR_ORANGE;
+    const WATER_COLOR = Graphics.COLOR_BLUE;
 
     private var _items;
     private var _strategyId;
@@ -37,6 +41,8 @@ class FuelField extends WatchUi.DataField {
     private var _lastT = 0;
     private var _carbsPlanned = 0;
     private var _carbsTaken = 0;
+    private var _mlPlanned = 0;
+    private var _mlTaken = 0;
 
     function initialize() {
         DataField.initialize();
@@ -50,6 +56,7 @@ class FuelField extends WatchUi.DataField {
         _strategyName = strategy["name"];
         for (var i = 0; i < _items.size(); i++) {
             _carbsPlanned += _items[i]["c"];
+            _mlPlanned += _items[i]["ml"];
         }
     }
 
@@ -102,44 +109,47 @@ class FuelField extends WatchUi.DataField {
             return;
         }
 
-        drawRing(dc, w, h);
-
-        if (_next < 0) {
-            dc.drawText(cx, h * 0.34, Graphics.FONT_XTINY, "FUELUP", center);
-            dc.drawText(cx, h * 0.50, Graphics.FONT_SMALL, _strategyName, center);
-            dc.drawText(cx, h * 0.66, Graphics.FONT_XTINY, Lang.format("$1$ g carbo", [_carbsPlanned]), center);
-            return;
+        var outer = (w < h ? w : h) / 2 - RING_WIDTH / 2 - 1;
+        drawRing(dc, w / 2, h / 2, outer, _carbsTaken, _carbsPlanned, CARBS_COLOR);
+        if (_mlPlanned > 0) {
+            drawRing(dc, w / 2, h / 2, outer - RING_WIDTH - RING_GAP, _mlTaken, _mlPlanned, WATER_COLOR);
         }
 
-        if (_next < _items.size()) {
+        if (_next < 0) {
+            dc.drawText(cx, h * 0.30, Graphics.FONT_XTINY, "FUELUP", center);
+            dc.drawText(cx, h * 0.46, Graphics.FONT_SMALL, _strategyName, center);
+        } else if (_next < _items.size()) {
             var item = _items[_next];
             dc.setColor(Graphics.COLOR_LT_GRAY, Graphics.COLOR_TRANSPARENT);
             dc.drawText(cx, h * 0.24, Graphics.FONT_XTINY, _pendingSince >= 0 ? "CONFIRME COM LAP" : "PROXIMO", center);
-            dc.setColor(_pendingSince >= 0 ? Graphics.COLOR_ORANGE : fg, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(cx, h * 0.45, Graphics.FONT_NUMBER_HOT, status(), center);
+            dc.setColor(_pendingSince >= 0 ? CARBS_COLOR : fg, Graphics.COLOR_TRANSPARENT);
+            dc.drawText(cx, h * 0.42, Graphics.FONT_NUMBER_HOT, status(), center);
             dc.setColor(fg, Graphics.COLOR_TRANSPARENT);
-            dc.drawText(cx, h * 0.64, Graphics.FONT_SMALL, item["p"], center);
+            dc.drawText(cx, h * 0.59, Graphics.FONT_SMALL, item["p"], center);
         } else {
             dc.drawText(cx, h * 0.45, Graphics.FONT_MEDIUM, "Plano concluido", center);
         }
 
-        dc.setColor(Graphics.COLOR_ORANGE, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(cx, h * 0.79, Graphics.FONT_XTINY, Lang.format("$1$ / $2$ g carbo", [_carbsTaken, _carbsPlanned]), center);
+        dc.setColor(CARBS_COLOR, Graphics.COLOR_TRANSPARENT);
+        dc.drawText(cx, h * 0.73, Graphics.FONT_XTINY, Lang.format("$1$ / $2$ g carbo", [_carbsTaken, _carbsPlanned]), center);
+        if (_mlPlanned > 0) {
+            dc.setColor(WATER_COLOR, Graphics.COLOR_TRANSPARENT);
+            dc.drawText(cx, h * 0.83, Graphics.FONT_XTINY, Lang.format("$1$ / $2$ ml", [_mlTaken, _mlPlanned]), center);
+        }
     }
 
-    // Anel na borda da tela: trilho cinza e, em laranja, a fração do carboidrato planejado já consumida.
-    private function drawRing(dc as Graphics.Dc, w, h) {
-        var r = (w < h ? w : h) / 2 - RING_WIDTH / 2 - 1;
+    // Anel de progresso: trilho cinza e, na cor do nutriente, a fração do planejado já consumida.
+    private function drawRing(dc as Graphics.Dc, x, y, r, taken, planned, color) {
         dc.setPenWidth(RING_WIDTH);
         dc.setColor(Graphics.COLOR_DK_GRAY, Graphics.COLOR_TRANSPARENT);
-        dc.drawCircle(w / 2, h / 2, r);
-        if (_carbsPlanned > 0 && _carbsTaken > 0) {
-            var sweep = 360 * _carbsTaken / _carbsPlanned;
-            dc.setColor(Graphics.COLOR_ORANGE, Graphics.COLOR_TRANSPARENT);
+        dc.drawCircle(x, y, r);
+        if (planned > 0 && taken > 0) {
+            var sweep = 360 * taken / planned;
+            dc.setColor(color, Graphics.COLOR_TRANSPARENT);
             if (sweep >= 360) {
-                dc.drawCircle(w / 2, h / 2, r);
+                dc.drawCircle(x, y, r);
             } else {
-                dc.drawArc(w / 2, h / 2, r, Graphics.ARC_CLOCKWISE, 90, 90 - sweep);
+                dc.drawArc(x, y, r, Graphics.ARC_CLOCKWISE, 90, 90 - sweep);
             }
         }
         dc.setPenWidth(1);
@@ -171,6 +181,7 @@ class FuelField extends WatchUi.DataField {
         _pendingSince = -1;
         _seq = 0;
         _carbsTaken = 0;
+        _mlTaken = 0;
     }
 
     // Se o campo for recarregado no meio do treino, não dispara os alertas que já passaram.
@@ -250,6 +261,7 @@ class FuelField extends WatchUi.DataField {
         }
         if (action.equals("taken")) {
             _carbsTaken += _items[_next]["c"];
+            _mlTaken += _items[_next]["ml"];
         }
         _seq += 1;
         logs.add({

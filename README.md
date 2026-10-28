@@ -36,7 +36,8 @@ pnpm test
 
 Data Field: no relógio, em **Corrida (ou Ciclismo) → Configurações → Telas de dados**, adicione uma tela
 de **1 campo** e escolha **Connect IQ → FuelUp**. Coloque-a como última, antes da tela do relógio. Ela mostra a
-contagem até o próximo consumo, o produto e um anel com o carboidrato consumido do plano. No app Garmin Connect
+contagem até o próximo consumo, o produto e anéis com o carboidrato (laranja) e a hidratação (azul)
+consumidos do plano; sem nenhum clique, cada alerta conta como consumido. No app Garmin Connect
 (Dispositivo → Atividades e apps → FuelUp → Configurações) escolha em quais atividades o FuelUp atua. Num espaço pequeno de outra tela, o campo mostra só a contagem. No alerta, se
 "Confirmar consumo com LAP" estiver ligado (configurações do app no Garmin Connect), aperte **LAP**.
 No simulador: inicie a atividade em **Settings → Activity Data** (os alertas de teste vêm aos 1, 3 e 5 min).

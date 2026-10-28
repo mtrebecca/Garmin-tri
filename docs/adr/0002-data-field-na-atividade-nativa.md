@@ -29,8 +29,10 @@
    do celular as envia junto com a estratégia.
 7. **Posição da tela:** nenhum app Connect IQ pode criar telas de dados nem mudar a ordem delas.
    O app do celular vai guiar o atleta a colocar o FuelUp como última tela, logo antes do relógio.
-8. **Visual:** foco em tempo e carboidrato. Contagem grande até o próximo consumo, o produto e um
-   anel na borda com o carboidrato consumido do plano; distância e FC ficam nas telas nativas.
+8. **Visual:** foco em tempo, carboidrato e hidratação. Contagem grande até o próximo consumo, o
+   produto e dois anéis na borda: laranja (carboidrato) e azul (hidratação), com os totais
+   consumido / planejado. No modo padrão os totais sobem sozinhos a cada alerta, sem clique.
+   Distância e FC ficam nas telas nativas.
 
 ## Consequências
 
