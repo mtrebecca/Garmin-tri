@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; background: #ccc; }
@@ -34,32 +35,34 @@
   .chip svg { width: 16px; height: 16px; }
   .fine { position: absolute; left: 76px; bottom: 26px; font-size: 13px; color: #8a8f99; }
 
-  /* relógio (caixa base 520x520) */
-  .watch { position: absolute; width: 520px; height: 520px; transform-origin: 0 0; }
-  .watch .strap { position: absolute; left: 160px; width: 200px; height: 220px; background: linear-gradient(#2b2f37, #1c1f25); border-radius: 30px; }
-  .watch .strap.top { top: -170px; } .watch .strap.bottom { bottom: -170px; }
-  .watch .bezel { position: absolute; inset: 40px; border-radius: 50%;
-           background: radial-gradient(circle at 35% 28%, #6b717d, #33373f 55%, #1a1c21);
-           box-shadow: 0 40px 70px rgba(17,24,39,.35), inset 0 0 0 3px #454a55; }
-  .watch .btn { position: absolute; width: 16px; height: 42px; background: #3a3f4a; border-radius: 6px; }
-  .watch .screen { position: absolute; inset: 70px; border-radius: 50%; background: #000; overflow: hidden; }
+  /* relógio realista: caixa base 600x900, centro (300,450) */
+  .watch { position: absolute; width: 600px; height: 900px; transform-origin: 0 0; filter: drop-shadow(0 40px 50px rgba(17,24,39,.32)); }
+  /* pontas da pulseira somem suavemente, como em foto de produto */
+  .watch > svg.body { -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 20%, #000 80%, transparent 100%);
+                      mask-image: linear-gradient(to bottom, transparent 0, #000 20%, #000 80%, transparent 100%); }
+  .watch > svg.body { position: absolute; inset: 0; width: 600px; height: 900px; }
+  .watch .screen { position: absolute; left: 110px; top: 260px; width: 380px; height: 380px; border-radius: 50%; overflow: hidden; background: #000;
+                   font-family: "Roboto Condensed", "Segoe UI", sans-serif; }
+  .watch .glare { position: absolute; left: 95px; top: 245px; width: 410px; height: 410px; border-radius: 50%; pointer-events: none;
+                  background: radial-gradient(ellipse 70% 45% at 30% 18%, rgba(255,255,255,.16), rgba(255,255,255,0) 60%),
+                              linear-gradient(115deg, rgba(255,255,255,0) 55%, rgba(255,255,255,.05) 62%, rgba(255,255,255,0) 70%); }
   .screen svg.rings { position: absolute; inset: 0; width: 100%; height: 100%; }
   .face { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; }
-  .face .lbl { font-size: 22px; font-weight: 600; margin-top: 18px; }
-  .face .time { font-size: 104px; font-weight: 800; line-height: 1; letter-spacing: -2px; margin-top: 2px; }
-  .face .prod { font-size: 32px; font-weight: 700; margin-top: 6px; }
-  .face .big { font-size: 46px; font-weight: 800; line-height: 1.1; text-align: center; }
+  .face .lbl { font-size: 24px; font-weight: 700; margin-top: 18px; color: #fff; }
+  .face .time { font-size: 112px; font-weight: 700; line-height: 1; letter-spacing: -1px; margin-top: 0; }
+  .face .prod { font-size: 34px; font-weight: 700; margin-top: 4px; }
+  .face .big { font-size: 48px; font-weight: 700; line-height: 1.05; text-align: center; }
   .stat { display: flex; align-items: center; gap: 8px; font-size: 24px; font-weight: 700; margin-top: 10px; }
-  .stat svg { width: 24px; height: 24px; }
+  .stat svg { width: 22px; height: 22px; }
   .stat + .stat { margin-top: 4px; }
   .alert { position: absolute; inset: 0; background: #fff; color: #000; display: flex; flex-direction: column; align-items: center; }
   .alert .band { width: 100%; height: 30%; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 16px;
-                 font-size: 24px; font-weight: 800; letter-spacing: 1px; }
-  .alert .prod { font-size: 40px; font-weight: 800; margin-top: 34px; }
-  .alert .stat { color: #000; font-size: 30px; margin-top: 18px; }
+                 font-size: 25px; font-weight: 700; letter-spacing: .5px; }
+  .alert .prod { font-size: 44px; font-weight: 700; margin-top: 34px; }
+  .alert .stat { color: #000; font-size: 32px; margin-top: 16px; }
   .native { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; }
-  .native .k { font-size: 22px; color: #9aa4b2; letter-spacing: 2px; font-weight: 600; }
-  .native .v { font-size: 84px; font-weight: 800; line-height: 1; margin: 4px 0 10px; }
+  .native .k { font-size: 24px; color: #9aa4b2; letter-spacing: 1px; font-weight: 700; }
+  .native .v { font-size: 92px; font-weight: 700; line-height: 1; margin: 4px 0 8px; }
   .native hr { width: 70%; border: 0; border-top: 2px solid #333a46; margin: 10px 0 14px; }
   .wcap { position: absolute; width: 190px; text-align: center; font-size: 16px; font-weight: 700; color: #374151; }
 
@@ -80,7 +83,7 @@
     <p class="lead">Gel, isotônico, água e sal: o FuelUp avisa a hora de cada um, dentro da sua corrida, pedal ou triathlon.</p>
     <div class="pill">Grátis · sem assinatura</div>
   </div>
-  <div class="watch" data-face="field" data-c="0.69" data-w="0.5556" style="left:860px; top:70px; transform:scale(1.12)"></div>
+  <div class="watch" data-face="field" data-c="0.69" data-w="0.5556" style="left:744px; top:-144px; transform:scale(1.12)"></div>
   <div class="fine" style="left:96px">Metas definidas por você. Sugestões gerais, não é prescrição.</div>
   <div class="bar"><i></i><i></i></div>
 </div>
@@ -93,7 +96,7 @@
     <p class="lead">Carboidrato e hidratação num olhar: quanto falta para o próximo consumo e quanto você já cumpriu do plano.</p>
     <div class="pill">Grátis · sem assinatura</div>
   </div>
-  <div class="watch" data-face="field" data-c="0.69" data-w="0.5556" style="left:690px; top:40px; transform:scale(1.0)"></div>
+  <div class="watch" data-face="field" data-c="0.69" data-w="0.5556" style="left:639px; top:-137px; transform:scale(.97)"></div>
   <div class="bar"><i></i><i></i></div>
 </div>
 
@@ -108,8 +111,8 @@
       <div class="chip" data-icon="drop">Hora de beber</div>
     </div>
   </div>
-  <div class="watch" data-face="eat" style="left:620px; top:150px; transform:scale(.56)"></div>
-  <div class="watch" data-face="drink" style="left:900px; top:150px; transform:scale(.56)"></div>
+  <div class="watch" data-face="eat" style="left:566px; top:39px; transform:scale(.58)"></div>
+  <div class="watch" data-face="drink" style="left:856px; top:39px; transform:scale(.58)"></div>
 
   <div class="bar"><i></i><i></i></div>
 </div>
@@ -124,12 +127,12 @@
       <div class="chip">Corrida</div><div class="chip">Ciclismo</div><div class="chip">Natação</div><div class="chip">Triathlon</div>
     </div>
   </div>
-  <div class="watch" data-face="pace" style="left:600px; top:180px; transform:scale(.36)"></div>
-  <div class="watch" data-face="hr" style="left:776px; top:180px; transform:scale(.36)"></div>
-  <div class="watch" data-face="field" data-c="0.5" data-w="0.3334" style="left:950px; top:140px; transform:scale(.44)"></div>
-  <div class="wcap" style="left:598px; top:490px">Ritmo</div>
-  <div class="wcap" style="left:774px; top:490px">FC e distância</div>
-  <div class="wcap" style="left:969px; top:490px; color:#f97316">FuelUp</div>
+  <div class="watch" data-face="pace" style="left:556px; top:109px; transform:scale(.38)"></div>
+  <div class="watch" data-face="hr" style="left:746px; top:109px; transform:scale(.38)"></div>
+  <div class="watch" data-face="field" data-c="0.5" data-w="0.3334" style="left:927px; top:73px; transform:scale(.46)"></div>
+  <div class="wcap" style="left:575px; top:505px">Ritmo</div>
+  <div class="wcap" style="left:765px; top:505px">FC e distância</div>
+  <div class="wcap" style="left:970px; top:505px; color:#f97316">FuelUp</div>
   <div class="bar"><i></i><i></i></div>
 </div>
 
@@ -172,11 +175,33 @@
     pace: () => `<div class="native"><div class="k">RITMO</div><div class="v">5:12</div><div class="k">/KM</div></div>`,
     hr: () => `<div class="native"><div class="k">FC</div><div class="v">152</div><hr><div class="k">DISTÂNCIA</div><div class="v" style="font-size:64px">8,42</div></div>`,
   };
+  const ticks = Array.from({ length: 60 }, (_, i) => {
+    const long = i % 5 === 0, a = i * 6 * Math.PI / 180, r1 = long ? 206 : 211, r2 = 219;
+    return `<line x1="${300 + r1 * Math.sin(a)}" y1="${450 - r1 * Math.cos(a)}" x2="${300 + r2 * Math.sin(a)}" y2="${450 - r2 * Math.cos(a)}"
+      stroke="${long ? '#9aa0aa' : '#5c626c'}" stroke-width="${long ? 2.6 : 1.4}"/>`;
+  }).join('');
+  const button = (x, y, h, accent) => `<rect x="${x}" y="${y}" width="22" height="${h}" rx="7" fill="url(#btn)"/>` +
+    (accent ? `<rect x="${x + (x > 300 ? 14 : 2)}" y="${y + 8}" width="6" height="${h - 16}" rx="3" fill="#c8ff3d"/>` : '');
+  const body = `<svg class="body" viewBox="0 0 600 900">
+    <defs>
+      <linearGradient id="strap" x1="0" x2="1"><stop offset="0" stop-color="#16181d"/><stop offset=".5" stop-color="#2a2d34"/><stop offset="1" stop-color="#16181d"/></linearGradient>
+      <radialGradient id="case" cx=".35" cy=".28" r=".8"><stop offset="0" stop-color="#7b818c"/><stop offset=".45" stop-color="#3a3e46"/><stop offset="1" stop-color="#16181c"/></radialGradient>
+      <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#a7adb7"/><stop offset=".5" stop-color="#2b2e35"/><stop offset="1" stop-color="#6d727c"/></linearGradient>
+      <linearGradient id="btn" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#5d626c"/><stop offset=".5" stop-color="#2a2d33"/><stop offset="1" stop-color="#4a4f58"/></linearGradient>
+    </defs>
+    <path d="M190 0 H410 V300 H190 Z" fill="url(#strap)"/>
+    <path d="M190 600 H410 V900 H190 Z" fill="url(#strap)"/>
+    <path d="M190 0 V300 M410 0 V300 M190 600 V900 M410 600 V900" stroke="rgba(255,255,255,.06)" stroke-width="2"/>
+    ${button(56, 330, 64)}${button(48, 420, 64)}${button(56, 510, 64)}${button(522, 340, 70, true)}${button(522, 500, 64)}
+    <circle cx="300" cy="450" r="242" fill="url(#rim)"/>
+    <circle cx="300" cy="450" r="236" fill="url(#case)"/>
+    <circle cx="300" cy="450" r="224" fill="#0c0d10"/>
+    ${ticks}
+    <circle cx="300" cy="450" r="200" fill="#030304"/>
+    <circle cx="300" cy="450" r="236" fill="none" stroke="rgba(255,255,255,.18)" stroke-width="1.5"/>
+  </svg>`;
   document.querySelectorAll('.watch').forEach((el) => {
-    el.innerHTML = `<div class="strap top"></div><div class="strap bottom"></div><div class="bezel"></div>
-      <div class="btn" style="left:30px; top:170px"></div><div class="btn" style="left:30px; top:250px"></div>
-      <div class="btn" style="left:30px; top:330px"></div><div class="btn" style="right:30px; top:180px; background:#9be15d"></div>
-      <div class="btn" style="right:30px; top:300px"></div><div class="screen">${faces[el.dataset.face](el)}</div>`;
+    el.innerHTML = body + `<div class="screen">${faces[el.dataset.face](el)}</div><div class="glare"></div>`;
   });
   document.querySelectorAll('[data-bolt]').forEach((el) => { el.innerHTML = BOLT; });
   document.querySelectorAll('.chip[data-icon]').forEach((el) => { el.insertAdjacentHTML('afterbegin', el.dataset.icon === 'bolt' ? BOLT : DROP); });
